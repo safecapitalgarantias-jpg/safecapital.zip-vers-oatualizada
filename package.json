@@ -1,0 +1,16 @@
+{
+  "name": "safe-capital-chatbot",
+  "version": "1.0.0",
+  "description": "Chatbot da Safe Capital Garantia Locatícia",
+  "main": "chatbot.js",
+  "scripts": {
+    "start": "node chatbot.js"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.23.0",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
