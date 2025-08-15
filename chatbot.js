@@ -1,35 +1,8 @@
 // Dependências
 const qrcode = require('qrcode-terminal');
-const fs = require('fs');
-const express = require('express');
-const { Client, Buttons, List, MessageMedia, LocalAuth } = require('whatsapp-web.js');
+const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js');
 
-// 🔹 Mini servidor keep-alive (para o Render não hibernar)
-const app = express();
-app.get('/', (req, res) => res.send('Bot ativo!'));
-app.get('/health', (req, res) => res.json({ ok: true }));
-app.listen(process.env.PORT || 3000, () => {
-    console.log('🌐 Servidor keep-alive rodando...');
-});
-
-// 🔹 Inicializa cliente com sessão salva e flags para servidor/headless
-const client = new Client({
-    authStrategy: new LocalAuth({ dataPath: './session' }),
-    puppeteer: {
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--single-process',
-            '--disable-gpu'
-        ]
-    }
-});
-
+const client = new Client();
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 // Controle de etapa por usuário
@@ -53,11 +26,10 @@ async function sendWithTyping(chat, message, delayTime = 3000) {
 // Conexão do WhatsApp
 client.on('qr', qr => {
     qrcode.generate(qr, { small: true });
-    console.log('📲 Escaneie o QR Code acima para conectar.');
 });
 
 client.on('ready', () => {
-    console.log('✅ Tudo certo! WhatsApp conectado.');
+    console.log('Tudo certo! WhatsApp conectado.');
 });
 
 client.initialize();
@@ -153,4 +125,7 @@ client.on('message', async msg => {
         userStage[from] = null;
         return;
     }
+
+
 });
+
