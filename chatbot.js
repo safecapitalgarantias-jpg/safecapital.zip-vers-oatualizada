@@ -1,6 +1,6 @@
 
 // Dependências
-const QRCode = require('qrcode'); // <- novo
+const qrcode = require("qrcode-terminal");
 app.get('/qr', async (req, res) => {
   if (!lastQR) {
     return res.send(`
