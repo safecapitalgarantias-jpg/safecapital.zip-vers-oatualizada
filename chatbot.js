@@ -1,7 +1,6 @@
-// Dependências
-// antes ou perto das rotas do express
-let lastQR = null;
 
+// Dependências
+const QRCode = require('qrcode'); // <- novo
 app.get('/qr', async (req, res) => {
   if (!lastQR) {
     return res.send(`
@@ -173,7 +172,48 @@ client.on('message', async msg => {
         userStage[from] = null;
         return;
     }
+    
+    //Guarde o último QR e crie a rota web:
+  let lastQR = null;
 
+  app.get('/qr', async (req, res) => {
+  if (!lastQR) {
+    return res.send(`
+      <html>
+        <body style="font-family: sans-serif; display:flex; align-items:center; justify-content:center; height:100vh;">
+          <div>
+            <h2>Sem QR no momento</h2>
+            <p>Se o bot já conectou, não há QR para mostrar.</p>
+            <p><a href="/">Voltar</a></p>
+          </div>
+        </body>
+      </html>
+    `);
+  }
+  try {
+    const dataUrl = await QRCode.toDataURL(lastQR, { width: 300, margin: 1 });
+    res.send(`
+      <html>
+        <body style="display:flex; align-items:center; justify-content:center; height:100vh; background:#f7f7f7; font-family:sans-serif;">
+          <div style="text-align:center">
+            <h2>Escaneie o QR Code</h2>
+            <img src="${dataUrl}" alt="QR Code" />
+            <p style="color:#666">A página recarrega a cada 5s enquanto o QR for atualizado.</p>
+            <script>setTimeout(()=>location.reload(), 5000)</script>
+          </div>
+        </body>
+      </html>
+    `);
+  } catch (e) {
+    res.status(500).send('Erro ao gerar o QR.');
+  }
+});
+
+    const express = require('express');
+    const app = express();
+
+    app.get('/', (req, res) => res.send('Bot está rodando!'));
+    app.listen(3000, () => console.log('Servidor web ativo na porta 3000'));
 
 });
 
